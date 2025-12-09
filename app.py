@@ -27,6 +27,17 @@ FEATURE_COLS = [
     "days_since_last_active",
 ]
 
+# Alias label untuk tampilan di UI (Inference)
+FEATURE_ALIASES = {
+    "avg_study_duration": "Rata-rata belajar (menit)",
+    "avg_submission_rating": "Rata-rata rating submission (bintang)",
+    "avg_exam_score": "Rata-rata nilai kuis/ujian",
+    "total_submissions": "Total submission (tugas) yang dikerjakan",
+    "total_tracking_events": "Total membuka/mengakses materi",
+    "total_completed_modules": "Total menyelesaikan materi (sub-modul/tutorial)",
+    "days_since_last_active": "Terakhir aktif (hari yang lalu)",
+}
+
 LABEL_DISPLAY = {
     0: "Consistent Learner",
     1: "Fast Learner",
@@ -101,8 +112,7 @@ def predict_learner_type(model, scaler, feature_dict):
 
 def build_reason_sentence(learner_type: str, user_data: dict) -> str:
     """
-    Penjelasan deskriptif + saran, terinspirasi dari snippet HTML yang kamu kirim,
-    tapi disesuaikan dengan fitur yang tersedia sekarang.
+    Penjelasan deskriptif + saran.
     """
     avg_study_duration = user_data.get("avg_study_duration", 0.0)
     avg_submission_rating = user_data.get("avg_submission_rating", 0.0)
@@ -122,7 +132,6 @@ def build_reason_sentence(learner_type: str, user_data: dict) -> str:
             f"dan kamu sudah mengumpulkan **{total_submissions}** tugas/kuis."
         )
 
-        # kualitas nilai kurang
         if avg_submission_rating < 2.0 or avg_exam_score < 70.0:
             text += (
                 f" Namun, perlu diperhatikan bahwa rata-rata nilai submissionmu "
@@ -262,29 +271,29 @@ else:
     else:
         with st.expander("Penjelasan fitur yang digunakan model"):
             st.markdown(
-                """
-**total_tracking_events**  
+"""
+**total_tracking_events (Total membuka/mengakses materi)**  
 Jumlah total aktivitas interaksi pengguna dengan sistem (event tracking seperti membuka tutorial, next, dsb).
 
-**total_completed_modules**  
+**total_completed_modules (Total menyelesaikan materi)**  
 Dihitung dari **jumlah sub-modul / tutorial yang selesai**, bukan dari modul utama.
 
-**total_submissions**  
+**total_submissions (Total submission/tugas)**  
 Jumlah total tugas/kuis yang dikumpulkan.
 
-**avg_submission_rating**  
+**avg_submission_rating (Rata-rata rating submission)**  
 Rata-rata rating dari seluruh submission.
 
-**avg_study_duration**  
+**avg_study_duration (Rata-rata belajar per sesi – menit)**  
 Rata-rata durasi belajar per sesi.
 
-**avg_exam_score**  
+**avg_exam_score (Rata-rata nilai kuis/ujian)**  
 Rata-rata nilai ujian.
 
-**days_since_last_active**  
+**days_since_last_active (Terakhir aktif – hari)**  
 Jumlah hari sejak terakhir pengguna beraktivitas.
-                """
-            )
+        """
+    )
 
         st.subheader("Input Nilai Fitur")
 
@@ -292,7 +301,8 @@ Jumlah hari sejak terakhir pengguna beraktivitas.
         cols = st.columns(3)
         for i, feat in enumerate(FEATURE_COLS):
             with cols[i % 3]:
-                feature_values[feat] = st.number_input(feat, value=0.0)
+                label = FEATURE_ALIASES.get(feat, feat)
+                feature_values[feat] = st.number_input(label, value=0.0)
 
         if st.button("🚀 Jalankan Prediksi"):
             try:
