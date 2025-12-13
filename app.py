@@ -9,8 +9,8 @@ from pathlib import Path
 # KONFIGURASI
 # ==============================
 
-DATA_PATH = Path("df_convert.csv")
-MODEL_PATH = Path("model_learner_classifier.pkl")
+DATA_PATH = Path("df_dashboard.csv")
+MODEL_PATH = Path("best_model.pkl")
 SCALER_PATH = Path("scaler.pkl")
 LOGO_PATH = Path("logo.png")  # opsional
 
