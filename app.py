@@ -111,6 +111,55 @@ def predict_learner_type(model, scaler, feature_dict):
 
 
 def build_reason_sentence(learner_type: str, user_data: dict) -> str:
+    avg_study_duration = user_data.get("avg_study_duration", 0.0)
+    avg_submission_rating = user_data.get("avg_submission_rating", 0.0)
+    avg_exam_score = user_data.get("avg_exam_score", 0.0)
+    total_submissions = int(user_data.get("total_submissions", 0.0))
+    total_tracking_events = int(user_data.get("total_tracking_events", 0.0))
+    total_completed_modules = int(user_data.get("total_completed_modules", 0.0))
+    days_since_last_active = int(user_data.get("days_since_last_active", 0.0))
+
+    if learner_type == "Fast Learner":
+        return (
+            "Kamu dikategorikan sebagai **Fast Learner** karena mampu menyelesaikan banyak materi "
+            f"dalam waktu relatif singkat (**{total_completed_modules}** sub-modul selesai). "
+            f"Durasi belajar rata-rata sekitar **{avg_study_duration:.1f} menit** per sesi "
+            f"dengan tingkat aktivitas yang cukup tinggi (**{total_tracking_events}** interaksi).\n\n"
+            f"Dari sisi akademik, nilai ujian rata-rata **{avg_exam_score:.1f}** menunjukkan bahwa "
+            "kecepatan belajar tidak mengurangi pemahaman materi.\n\n"
+            "**Saran:** Pertahankan efisiensi belajarmu, namun tetap luangkan waktu untuk mereview "
+            "materi agar pemahaman tetap konsisten dalam jangka panjang."
+        )
+
+    if learner_type == "Consistent Learner":
+        return (
+            "Kamu termasuk **Consistent Learner** karena menunjukkan pola belajar yang stabil dan teratur. "
+            f"Kamu aktif mengakses materi (**{total_tracking_events}** aktivitas) dan "
+            f"menyelesaikan **{total_completed_modules}** sub-modul secara bertahap.\n\n"
+            f"Nilai submission rata-rata **{avg_submission_rating:.1f}** dan nilai ujian "
+            f"**{avg_exam_score:.1f}** mencerminkan performa akademik yang stabil. "
+            f"Kamu juga relatif konsisten dalam aktivitas belajar dengan jeda terakhir aktif "
+            f"sekitar **{days_since_last_active} hari**.\n\n"
+            "**Saran:** Pertahankan konsistensi ini karena sudah membentuk dasar pemahaman yang kuat."
+        )
+
+    if learner_type == "Reflective Learner":
+        return (
+            "Kamu dikategorikan sebagai **Reflective Learner** karena cenderung belajar dengan ritme lebih lambat "
+            "dan selektif. Jumlah materi yang diselesaikan masih terbatas "
+            f"(**{total_completed_modules}** sub-modul), namun kamu menghabiskan waktu belajar "
+            f"sekitar **{avg_study_duration:.1f} menit** per sesi.\n\n"
+            f"Aktivitas belajar (**{total_tracking_events}** interaksi) dan nilai ujian "
+            f"(**{avg_exam_score:.1f}**) menunjukkan bahwa kamu masih berada pada tahap eksplorasi.\n\n"
+            "**Saran:** Cobalah meningkatkan konsistensi belajar dengan menyelesaikan lebih banyak materi "
+            "secara bertahap agar pemahaman yang kamu bangun dapat tercermin pada hasil evaluasi."
+        )
+
+    return (
+        f"Kamu mendapatkan kategori **{learner_type}** berdasarkan kombinasi pola aktivitas belajar "
+        "dan performa akademik."
+    )
+
     """
     Penjelasan deskriptif + saran.
     """
